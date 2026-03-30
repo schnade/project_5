@@ -199,4 +199,85 @@ public:
 // Iterator.
 
 
+  //EFFECTS:  returns true if the list is empty
+template<typename T>
+bool List<T>::empty() const{
+  assert(false);
+}
+
+  //EFFECTS: returns the number of elements in this List
+  //HINT:    Traversing a list is really slow. Instead, keep track of the size
+  //         with a private member variable. That's how std::list does it.
+template<typename T>
+int List<T>::size() const{
+  assert(false);
+}
+
+  //REQUIRES: list is not empty
+  //EFFECTS: Returns the first element in the list by reference
+template<typename T>
+T & List<T>:: front() {
+  assert(false);
+}
+
+  //REQUIRES: list is not empty
+  //EFFECTS: Returns the last element in the list by reference
+template<typename T>
+T & List<T>:: back(){
+  assert(false);
+}
+
+  //EFFECTS:  inserts datum into the front of the list
+template<typename T>
+void List<T>:: push_front(const T &datum){
+  assert(false);
+}
+
+//EFFECTS:  inserts datum into the back of the list
+template<typename T>
+void List<T>::push_back(const T &datum){
+  assert(false);
+}
+
+  //REQUIRES: list is not empty
+  //MODIFIES: invalidates all iterators to the removed element
+  //EFFECTS:  removes the item at the front of the list
+template<typename T>
+void List<T>::pop_front(){
+  assert(false);
+}
+
+  //REQUIRES: list is not empty
+  //MODIFIES: invalidates all iterators to the removed element
+  //EFFECTS:  removes the item at the back of the list
+template<typename T>
+void List<T>::pop_back(){
+  assert(false);
+}
+
+  //MODIFIES: invalidates all iterators to the removed elements
+  //EFFECTS:  removes all items from the list
+template<typename T>
+void List<T>::clear(){
+  assert(false);
+}
+
+
+  // You should add in a default constructor, destructor, copy constructor,
+  // and overloaded assignment operator, if appropriate. If these operations
+  // will work correctly without defining these, you should omit them. A user
+  // of the class must be able to create, copy, assign, and destroy Lists.
+
+
+
+  //REQUIRES: list is empty
+  //EFFECTS:  copies all nodes from other to this
+  template<typename T>
+  void copy_all(const List<T> &other){
+
+  }
+
+  //implementng iterators?
+
+
 #endif // Do not remove this. Write all your code above this line.
