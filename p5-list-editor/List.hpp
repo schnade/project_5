@@ -299,7 +299,7 @@ typename List<T>::Iterator & List<T>::Iterator::operator++(){
 }
 
 template<typename T>
-bool operator==(Iterator rhs) const{
+bool List<T>::Iterator::operator==(Iterator rhs) const{
   assert(false);
 }
 
