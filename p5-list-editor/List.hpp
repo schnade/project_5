@@ -92,6 +92,11 @@ public:
 
     // Your iterator should implement the following public operators:
     // *, ++ (both prefix and postfix), == and !=.
+    T& operator*();
+    Iterator& operator++(int);
+    Iterator& operator++();
+    bool operator==(Iterator rhs) const;
+    bool operator!=(Iterator rhs) const;
     // Equality comparisons must satisfy the following rules:
     // - two default-constructed iterators must compare equal
     // - a default-constructed iterator must compare unequal to an
@@ -274,10 +279,33 @@ void List<T>::clear(){
   //EFFECTS:  copies all nodes from other to this
   template<typename T>
   void copy_all(const List<T> &other){
-
+    assert(false);
   }
 
-  //implementng iterators?
+//implementng iterators?
+template<typename T>
+T & List<T>::Iterator::operator*() const {
+  assert(false);
+}
 
+template<typename T>
+typename List<T>::Iterator & List<T>::Iterator::operator++(int){
+  assert(false);
+}
+
+template<typename T>
+typename List<T>::Iterator & List<T>::Iterator::operator++(){
+  assert(false);
+}
+
+template<typename T>
+bool operator==(Iterator rhs) const{
+  assert(false);
+}
+
+template<typename T>
+bool operator!=(Iterator rhs) const{
+  assert(false);
+}
 
 #endif // Do not remove this. Write all your code above this line.
