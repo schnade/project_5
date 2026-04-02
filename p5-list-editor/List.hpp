@@ -92,7 +92,7 @@ public:
 
     // Your iterator should implement the following public operators:
     // *, ++ (both prefix and postfix), == and !=.
-    T& operator*();
+    T& operator*() const;
     Iterator& operator++(int);
     Iterator& operator++();
     bool operator==(Iterator rhs) const;
@@ -284,28 +284,74 @@ void List<T>::clear(){
 
 //implementng iterators?
 template<typename T>
+//    T& operator*() const;
+
 T & List<T>::Iterator::operator*() const {
   assert(false);
 }
 
 template<typename T>
+    //Iterator& operator++(int);
+
 typename List<T>::Iterator & List<T>::Iterator::operator++(int){
   assert(false);
 }
 
 template<typename T>
+    //Iterator& operator++();
 typename List<T>::Iterator & List<T>::Iterator::operator++(){
   assert(false);
 }
 
 template<typename T>
+    //bool operator==(Iterator rhs) const;
+
 bool List<T>::Iterator::operator==(Iterator rhs) const{
   assert(false);
 }
 
 template<typename T>
-bool operator!=(Iterator rhs) const{
+    //bool operator!=(Iterator rhs) const;
+
+bool List<T>::Iterator::operator!=(Iterator rhs) const{
   assert(false);
 }
+
+  // return an Iterator pointing to the first element
+template<typename T>
+//  Iterator begin() const;
+//bool List<T>::begin() const {
+List<T>::Iterator List<T>::begin() const{
+  //List<T>::Iterator List<T>::begin() const
+  assert(false);
+}
+
+  // return an Iterator pointing to "past the end"
+template<typename T>
+List<T>::Iterator List<T>::end() const{
+
+}
+//Iterator end() const;
+
+  //REQUIRES: i is a valid, dereferenceable iterator associated with this list
+  //MODIFIES: invalidates all iterators to the removed element
+  //EFFECTS: Removes a single element from the list container.
+  //         Returns An iterator pointing to the element that followed the
+  //         element erased by the function call
+template<typename T>
+List<T>::Iterator List<T>::end() const{ 
+  assert(false);
+//  Iterator erase(Iterator i);
+}
+  //REQUIRES: i is a valid iterator associated with this list
+  //EFFECTS: Inserts datum before the element at the specified position.
+  //         Returns an iterator to the the newly inserted element.
+template<typename T>
+List<T>::Iterator List<T>::insert(Iterator i, const T &datum){
+  assert(false);
+
+}  
+
+//Iterator insert(Iterator i, const T &datum);
 
 #endif // Do not remove this. Write all your code above this line.
