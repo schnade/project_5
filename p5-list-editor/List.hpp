@@ -16,7 +16,7 @@ class List {
   //OVERVIEW: a doubly-linked, double-ended list with Iterator interface
 public:
 
-  List():first(nullptr), last(nullptr), size_(0){ }
+  List() : first(nullptr), last(nullptr), size_(0){ }
   ~List(){
     clear();
   }
@@ -100,7 +100,7 @@ public:
 
     // Add a default constructor here. The default constructor must set both
     // pointer members to null pointers.
-
+    Iterator(): list_ptr(nullptr), node_ptr(nullptr){}
 
 
     // Add custom implementations of the destructor, copy constructor, and
@@ -113,10 +113,11 @@ public:
     // Your iterator should implement the following public operators:
     // *, ++ (both prefix and postfix), == and !=.
     T& operator*() const;
-    Iterator& operator++(int);
+    Iterator operator++(int);
     Iterator& operator++();
     bool operator==(Iterator rhs) const;
     bool operator!=(Iterator rhs) const;
+    friend class List;
     // Equality comparisons must satisfy the following rules:
     // - two default-constructed iterators must compare equal
     // - a default-constructed iterator must compare unequal to an
@@ -265,7 +266,6 @@ void List<T>:: push_front(const T &datum){
     first = addedNode;
     last = addedNode;
   } else {
-    addedNode->next = first;
     first->prev = addedNode;
     first = addedNode;
   }
@@ -276,7 +276,7 @@ void List<T>:: push_front(const T &datum){
 //EFFECTS:  inserts datum into the back of the list
 template<typename T>
 void List<T>::push_back(const T &datum){
-  Node* addedNode = new Node(datum);
+  Node* addedNode = new Node(datum, last, nullptr);
   if(empty()){
   first = addedNode;
   last = addedNode;
@@ -294,20 +294,17 @@ void List<T>::push_back(const T &datum){
 template<typename T>
 void List<T>::pop_front(){
   assert(!empty());
-  Node* temp = first;
+  Node* temporary = first;
   if(size_ == 1){
-    Node* temporary = first;
-    first = first->next;
-    first->prev = nullptr;
-    delete temporary;
-    size_--;
+    first = nullptr;
+    last = nullptr;
   } else {
     first = first->next;
     first->prev = nullptr;
   }
 
   delete temporary;
-  size--;
+  size_--;
 }
 
   //REQUIRES: list is not empty
@@ -316,27 +313,26 @@ void List<T>::pop_front(){
 template<typename T>
 void List<T>::pop_back(){
   assert(!empty());
-  Node* temp = first;
+  Node* temporary = last;
   if(size_ == 1){
-    Node* temporary = first;
-    first = first->next;
-    first->prev = nullptr;
-    delete temporary;
-    size_--;
+    first = nullptr;
+    last = nullptr;
   } else {
-    first = first->next;
-    first->prev = nullptr;
+    last = last->prev;
+    last->next = nullptr;
   }
 
   delete temporary;
-  size--;
+  size_--;
 }
 
   //MODIFIES: invalidates all iterators to the removed elements
   //EFFECTS:  removes all items from the list
 template<typename T>
 void List<T>::clear(){
-  assert(false);
+  while(!empty()){
+    pop_front();
+  }
 }
 
 
@@ -356,39 +352,48 @@ void List<T>::clear(){
     }
   }
 
+
+template<typename T>
+List<T>::Iterator::Iterator(const List *lp, Node *np) :
+  list_ptr(lp), node_ptr(np){}
 //implementng iterators?
 template<typename T>
 //    T& operator*() const;
 
 T & List<T>::Iterator::operator*() const {
-  assert(false);
+  assert(node_ptr);
+  return node_ptr->datum;
 }
 
 template<typename T>
     //Iterator& operator++(int);
 
-typename List<T>::Iterator & List<T>::Iterator::operator++(int){
-  assert(false);
+typename List<T>::Iterator List<T>::Iterator::operator++(int){
+  Iterator temporary = *this;
+  operator++();
+  return temporary;
 }
 
 template<typename T>
     //Iterator& operator++();
 typename List<T>::Iterator & List<T>::Iterator::operator++(){
-  assert(false);
+  assert(node_ptr);
+  node_ptr = node_ptr->next;
+  return *this;
 }
 
 template<typename T>
     //bool operator==(Iterator rhs) const;
 
 bool List<T>::Iterator::operator==(Iterator rhs) const{
-  assert(false);
+  return list_ptr == rhs.list_ptr && node_ptr == rhs.node_ptr;
 }
 
 template<typename T>
     //bool operator!=(Iterator rhs) const;
 
 bool List<T>::Iterator::operator!=(Iterator rhs) const{
-  assert(false);
+  return !(*this == rhs);
 }
 
   // return an Iterator pointing to the first element
@@ -428,6 +433,8 @@ List<T>::Iterator List<T>::erase(Iterator i){
     delete node;
     size_--;
   }
+
+  return Iterator(this, nextNode);
 //  Iterator erase(Iterator i);
 }
   //REQUIRES: i is a valid iterator associated with this list
@@ -435,7 +442,23 @@ List<T>::Iterator List<T>::erase(Iterator i){
   //         Returns an iterator to the the newly inserted element.
 template<typename T>
 List<T>::Iterator List<T>::insert(Iterator i, const T &datum){
-  assert(false);
+  if(i.node_ptr == first){
+    push_front(datum);
+    return begin();
+  }
+  if(i.node_ptr == nullptr){
+    push_back(datum);
+    return Iterator(this, last);
+  }
+
+  Node* current = i.node_ptr;
+  Node* newNode = new Node(datum, current->prev, current);
+
+  current->prev->next = newNode;
+  current->prev = newNode;
+
+  size_++;
+  return Iterator(this, newNode);
 
 }  
 
