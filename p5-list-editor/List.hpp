@@ -16,6 +16,22 @@ class List {
   //OVERVIEW: a doubly-linked, double-ended list with Iterator interface
 public:
 
+  List():first(nullptr), last(nullptr), size_(0){ }
+  ~List(){
+    clear();
+  }
+  List(const List &other): first(nullptr), last(nullptr), size_(0){
+    copy_all(other);
+  }
+
+  List &operator=(const List &rhs){
+    if(this != &rhs){
+      clear();
+      copy_all(rhs);
+    }
+    return *this;
+  }
+
   //EFFECTS:  returns true if the list is empty
   bool empty() const;
 
@@ -58,11 +74,15 @@ public:
   // of the class must be able to create, copy, assign, and destroy Lists.
 
 private:
+  int size_;
   //a private type
   struct Node {
     Node *next;
     Node *prev;
     T datum;
+
+    Node(const T&d, Node* p = nullptr, Node* n = nullptr) : 
+      next(n), prev(p), datum(d) {}
   };
 
   //REQUIRES: list is empty
@@ -204,10 +224,11 @@ public:
 // Iterator.
 
 
+
   //EFFECTS:  returns true if the list is empty
 template<typename T>
 bool List<T>::empty() const{
-  assert(false);
+  return size_ == 0;
 }
 
   //EFFECTS: returns the number of elements in this List
@@ -215,33 +236,56 @@ bool List<T>::empty() const{
   //         with a private member variable. That's how std::list does it.
 template<typename T>
 int List<T>::size() const{
-  assert(false);
+  return size_;
 }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the first element in the list by reference
 template<typename T>
 T & List<T>:: front() {
-  assert(false);
+  assert(!empty());
+  return first->datum;
 }
 
   //REQUIRES: list is not empty
   //EFFECTS: Returns the last element in the list by reference
 template<typename T>
 T & List<T>:: back(){
-  assert(false);
+  assert(!empty());
+  return last->datum;
 }
 
   //EFFECTS:  inserts datum into the front of the list
 template<typename T>
 void List<T>:: push_front(const T &datum){
-  assert(false);
+  Node* addedNode = new Node(datum, nullptr, first);
+
+
+  if(empty()){
+    first = addedNode;
+    last = addedNode;
+  } else {
+    addedNode->next = first;
+    first->prev = addedNode;
+    first = addedNode;
+  }
+  size_++;
+
 }
 
 //EFFECTS:  inserts datum into the back of the list
 template<typename T>
 void List<T>::push_back(const T &datum){
-  assert(false);
+  Node* addedNode = new Node(datum);
+  if(empty()){
+  first = addedNode;
+  last = addedNode;
+  } else {
+    last->next = addedNode;
+    last = addedNode;
+  }
+
+  size_++;
 }
 
   //REQUIRES: list is not empty
@@ -249,7 +293,21 @@ void List<T>::push_back(const T &datum){
   //EFFECTS:  removes the item at the front of the list
 template<typename T>
 void List<T>::pop_front(){
-  assert(false);
+  assert(!empty());
+  Node* temp = first;
+  if(size_ == 1){
+    Node* temporary = first;
+    first = first->next;
+    first->prev = nullptr;
+    delete temporary;
+    size_--;
+  } else {
+    first = first->next;
+    first->prev = nullptr;
+  }
+
+  delete temporary;
+  size--;
 }
 
   //REQUIRES: list is not empty
@@ -257,7 +315,21 @@ void List<T>::pop_front(){
   //EFFECTS:  removes the item at the back of the list
 template<typename T>
 void List<T>::pop_back(){
-  assert(false);
+  assert(!empty());
+  Node* temp = first;
+  if(size_ == 1){
+    Node* temporary = first;
+    first = first->next;
+    first->prev = nullptr;
+    delete temporary;
+    size_--;
+  } else {
+    first = first->next;
+    first->prev = nullptr;
+  }
+
+  delete temporary;
+  size--;
 }
 
   //MODIFIES: invalidates all iterators to the removed elements
@@ -278,8 +350,10 @@ void List<T>::clear(){
   //REQUIRES: list is empty
   //EFFECTS:  copies all nodes from other to this
   template<typename T>
-  void copy_all(const List<T> &other){
-    assert(false);
+  void List<T>::copy_all(const List<T> &other){
+    for(Node* current = other.first; current != nullptr; current = current-> next){
+      push_back(current->datum);
+    }
   }
 
 //implementng iterators?
@@ -323,13 +397,13 @@ template<typename T>
 //bool List<T>::begin() const {
 List<T>::Iterator List<T>::begin() const{
   //List<T>::Iterator List<T>::begin() const
-  assert(false);
+  return Iterator(this, first);
 }
 
   // return an Iterator pointing to "past the end"
 template<typename T>
 List<T>::Iterator List<T>::end() const{
-
+  return Iterator(this, nullptr);
 }
 //Iterator end() const;
 
@@ -339,8 +413,21 @@ List<T>::Iterator List<T>::end() const{
   //         Returns An iterator pointing to the element that followed the
   //         element erased by the function call
 template<typename T>
-List<T>::Iterator List<T>::end() const{ 
-  assert(false);
+List<T>::Iterator List<T>::erase(Iterator i){ 
+  assert(i.node_ptr);
+  Node* node = i.node_ptr;
+  Node* nextNode = node->next;
+
+  if(node == first){
+    pop_front();
+  } else if(node == last){
+    pop_back();
+  } else {
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    delete node;
+    size_--;
+  }
 //  Iterator erase(Iterator i);
 }
   //REQUIRES: i is a valid iterator associated with this list
