@@ -16,11 +16,11 @@ class List {
   //OVERVIEW: a doubly-linked, double-ended list with Iterator interface
 public:
 
-  List() : first(nullptr), last(nullptr), size_(0){ }
+  List() : size_(0), first(nullptr), last(nullptr) { }
   ~List(){
     clear();
   }
-  List(const List &other): first(nullptr), last(nullptr), size_(0){
+  List(const List &other): size_(0), first(nullptr), last(nullptr) {
     copy_all(other);
   }
 
@@ -243,7 +243,7 @@ int List<T>::size() const{
   //REQUIRES: list is not empty
   //EFFECTS: Returns the first element in the list by reference
 template<typename T>
-T & List<T>:: front() {
+T& List<T>:: front() {
   assert(!empty());
   return first->datum;
 }
@@ -354,7 +354,7 @@ void List<T>::clear(){
 
 
 template<typename T>
-List<T>::Iterator::Iterator(const List *lp, Node *np) :
+typename List<T>::Iterator::Iterator(const List *lp, Node *np) :
   list_ptr(lp), node_ptr(np){}
 //implementng iterators?
 template<typename T>
@@ -377,8 +377,8 @@ typename List<T>::Iterator List<T>::Iterator::operator++(int){
 template<typename T>
     //Iterator& operator++();
 typename List<T>::Iterator & List<T>::Iterator::operator++(){
-  assert(node_ptr);
-  node_ptr = node_ptr->next;
+  assert(list_ptr);
+  if(node_ptr) node_ptr = node_ptr->next;
   return *this;
 }
 
@@ -400,14 +400,14 @@ bool List<T>::Iterator::operator!=(Iterator rhs) const{
 template<typename T>
 //  Iterator begin() const;
 //bool List<T>::begin() const {
-List<T>::Iterator List<T>::begin() const{
+typename List<T>::Iterator List<T>::begin() const{
   //List<T>::Iterator List<T>::begin() const
   return Iterator(this, first);
 }
 
   // return an Iterator pointing to "past the end"
 template<typename T>
-List<T>::Iterator List<T>::end() const{
+typename List<T>::Iterator List<T>::end() const{
   return Iterator(this, nullptr);
 }
 //Iterator end() const;
@@ -418,22 +418,28 @@ List<T>::Iterator List<T>::end() const{
   //         Returns An iterator pointing to the element that followed the
   //         element erased by the function call
 template<typename T>
-List<T>::Iterator List<T>::erase(Iterator i){ 
+typename List<T>::Iterator List<T>::erase(Iterator i){ 
   assert(i.node_ptr);
   Node* node = i.node_ptr;
   Node* nextNode = node->next;
 
-  if(node == first){
-    pop_front();
+  if(size_ == 1){
+    first = nullptr;
+    last = nullptr;
+  } else if(node == first){
+    first = first->next;
+    first->prev = nullptr;
   } else if(node == last){
-    pop_back();
+    last = last->prev;
+    last->next = nullptr;
   } else {
     node->prev->next = node->next;
     node->next->prev = node->prev;
-    delete node;
-    size_--;
+    
   }
-
+  delete node;
+  size_--;
+  
   return Iterator(this, nextNode);
 //  Iterator erase(Iterator i);
 }
@@ -441,7 +447,7 @@ List<T>::Iterator List<T>::erase(Iterator i){
   //EFFECTS: Inserts datum before the element at the specified position.
   //         Returns an iterator to the the newly inserted element.
 template<typename T>
-List<T>::Iterator List<T>::insert(Iterator i, const T &datum){
+typename List<T>::Iterator List<T>::insert(Iterator i, const T& datum){
   if(i.node_ptr == first){
     push_front(datum);
     return begin();
