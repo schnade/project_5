@@ -354,7 +354,7 @@ void List<T>::clear(){
 
 
 template<typename T>
-typename List<T>::Iterator::Iterator(const List *lp, Node *np) :
+List<T>::Iterator::Iterator(const List *lp, typename List<T>::Node *np) :
   list_ptr(lp), node_ptr(np){}
 //implementng iterators?
 template<typename T>
