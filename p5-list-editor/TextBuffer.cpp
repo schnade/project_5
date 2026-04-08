@@ -89,13 +89,11 @@ void TextBuffer::insert(char c){
 bool TextBuffer::remove(){
     if(is_at_end()){
         return false;
-        
+
     } else if (data_at_cursor() == '\n'){
         column = compute_column();
-        row--;
     }
     cursor = data.erase(cursor);
-    index--;
 
     return true;
 }
