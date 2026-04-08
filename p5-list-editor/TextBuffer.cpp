@@ -127,6 +127,7 @@ void TextBuffer::move_to_row_end(){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 void TextBuffer::move_to_column(int new_column){
+    assert(new_column >= 0);
     move_to_row_start();
 
     for(int i = 0; i < new_column; i++){
