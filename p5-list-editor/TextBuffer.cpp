@@ -43,7 +43,22 @@ bool TextBuffer::forward(){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 bool TextBuffer::backward(){
-    
+    if(cursor == data.begin()){
+        return false;
+    }
+
+    cursor--;
+    index--;
+
+
+    if (*cursor == '\n'){
+        row--;
+        column = compute_column();
+    } else {
+        column--;
+    }
+
+    return true;
 }
   //MODIFIES: *this
   //EFFECTS:  Inserts a character in the buffer before the cursor position.
@@ -53,7 +68,9 @@ bool TextBuffer::backward(){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 void TextBuffer::insert(char c){
-
+    data.insert(cursor, c);
+    index++;
+    column++;
 }
   //MODIFIES: *this
   //EFFECTS:  Removes the character from the buffer that is at the cursor and
@@ -65,14 +82,14 @@ void TextBuffer::insert(char c){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 bool TextBuffer::remove(){
-
+    return true;
 }
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the start of the current row (column 0).
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 void TextBuffer::move_to_row_start(){
-
+    
 }
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the end of the current row (the
