@@ -21,11 +21,16 @@ TextBuffer::TextBuffer() :
 bool TextBuffer::forward(){
     if(cursor == data.end()){
         return false;
+    } else if (*cursor == '\n'){
+        row++;
+        column = 0;
     } else {
-        cursor++;
-        index++;
+        column++;
+        
     }
-
+    cursor++;
+    index++;
+    return true;
 
 }
   //MODIFIES: *this
