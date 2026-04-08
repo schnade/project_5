@@ -70,7 +70,12 @@ bool TextBuffer::backward(){
 void TextBuffer::insert(char c){
     data.insert(cursor, c);
     index++;
-    column++;
+    if(c == '\n'){
+        row++;
+        column = 0;
+    } else {
+        column++;
+    }
 }
   //MODIFIES: *this
   //EFFECTS:  Removes the character from the buffer that is at the cursor and
@@ -84,7 +89,8 @@ void TextBuffer::insert(char c){
 bool TextBuffer::remove(){
     if(is_at_end()){
         return false;
-    } else if (*cursor == '\n'){
+        
+    } else if (data_at_cursor() == '\n'){
         column = compute_column();
         row--;
     }
@@ -98,7 +104,9 @@ bool TextBuffer::remove(){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 void TextBuffer::move_to_row_start(){
-    
+    while(column > 0){
+        backward();
+    }
 }
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the end of the current row (the
@@ -107,7 +115,9 @@ void TextBuffer::move_to_row_start(){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 void TextBuffer::move_to_row_end(){
-
+    while(cursor != data.end() and data_at_cursor() != '\n'){
+        forward();
+    }
 }
   //REQUIRES: new_column >= 0
   //MODIFIES: *this
@@ -119,7 +129,12 @@ void TextBuffer::move_to_row_end(){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 void TextBuffer::move_to_column(int new_column){
+    move_to_row_start();
 
+    for(int i = 0; i < new_column; i++){
+        if(cursor == data.end() or data_at_cursor() == '\n') break;
+        forward();
+    }
 }
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the previous row, retaining the
@@ -132,7 +147,16 @@ void TextBuffer::move_to_column(int new_column){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 bool TextBuffer::up(){
-
+    if(row == 1){
+        return false;
+    } else {
+        int originalColumn = column;
+        move_to_row_start();
+        backward();
+        move_to_row_start();
+        move_to_column(originalColumn);
+    }
+    return true;
 }
   //MODIFIES: *this
   //EFFECTS:  Moves the cursor to the next row, retaining the current
@@ -146,6 +170,15 @@ bool TextBuffer::up(){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 bool TextBuffer::down() {
+    int originalColumn = column;
+    move_to_row_end();
+    if(is_at_end()){
+        return false;
+    } else {
+        forward();
+        move_to_column(originalColumn);
+    }
+    return true;
 
 }
   //EFFECTS:  Returns whether the cursor is at the past-the-end position.
@@ -156,6 +189,7 @@ bool TextBuffer::is_at_end() const {
   //EFFECTS:  Returns the character at the current cursor
 char TextBuffer::data_at_cursor() const {
     assert(!is_at_end());
+    return *cursor;
 }
   //EFFECTS:  Returns the row of the character at the current cursor.
 int TextBuffer::get_row() const {
@@ -173,7 +207,7 @@ int TextBuffer::get_index() const {
 }
   //EFFECTS:  Returns the number of characters in the buffer.
 int TextBuffer::size() const {
-    return size();
+    return data.size();
 }
   //EFFECTS:  Returns the contents of the text buffer as a string.
   //HINT: Implement this using the string constructor that takes a
@@ -181,12 +215,25 @@ int TextBuffer::size() const {
   //        return std::string(data.begin(), data.end());
 
 string TextBuffer::stringify() const {
-
+    return string(data.begin(), data.end());
 }
 
   //EFFECTS: Computes the column of the cursor within the current row.
   //NOTE: This does not assume that the "column" member variable has
   //      a correct value (i.e. the row/column INVARIANT can be broken).
 int TextBuffer::compute_column() const {
-    
+    auto temporary = cursor;
+    int column = 0;
+
+    while (temporary != data.begin()){
+        auto previous = temporary;
+        previous--;
+
+        if (*previous == '\n'){
+            break;
+        } 
+        temporary = previous;
+        column++;
+    }
+    return column;
 }
