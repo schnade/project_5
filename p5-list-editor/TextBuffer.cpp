@@ -19,7 +19,7 @@ TextBuffer::TextBuffer() :
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 bool TextBuffer::forward(){
-    if(cursor == data.end()){
+    if(is_at_end()){
         return false;
     } else if (*cursor == '\n'){
         row++;
@@ -82,6 +82,15 @@ void TextBuffer::insert(char c){
   //NOTE:     Your implementation must update the row, column, and index
   //          if appropriate to maintain all invariants.
 bool TextBuffer::remove(){
+    if(is_at_end()){
+        return false;
+    } else if (*cursor == '\n'){
+        column = compute_column();
+        row--;
+    }
+    cursor = data.erase(cursor);
+    index--;
+
     return true;
 }
   //MODIFIES: *this
@@ -141,12 +150,12 @@ bool TextBuffer::down() {
 }
   //EFFECTS:  Returns whether the cursor is at the past-the-end position.
 bool TextBuffer::is_at_end() const {
-
+    return cursor == data.end();
 }
   //REQUIRES: the cursor is not at the past-the-end position
   //EFFECTS:  Returns the character at the current cursor
 char TextBuffer::data_at_cursor() const {
-
+    assert(!is_at_end());
 }
   //EFFECTS:  Returns the row of the character at the current cursor.
 int TextBuffer::get_row() const {
@@ -164,7 +173,7 @@ int TextBuffer::get_index() const {
 }
   //EFFECTS:  Returns the number of characters in the buffer.
 int TextBuffer::size() const {
-
+    return size();
 }
   //EFFECTS:  Returns the contents of the text buffer as a string.
   //HINT: Implement this using the string constructor that takes a
@@ -179,5 +188,5 @@ string TextBuffer::stringify() const {
   //NOTE: This does not assume that the "column" member variable has
   //      a correct value (i.e. the row/column INVARIANT can be broken).
 int TextBuffer::compute_column() const {
-
+    
 }
